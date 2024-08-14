@@ -16,11 +16,9 @@ import Toast from '../../models/toast.model';
   styleUrl: './enrol.component.css',
 })
 export class EnrolComponent {
-  constructor(
-    private router: Router,
-    private faceService: FaceService
-  ) {}
+  constructor(private router: Router, private faceService: FaceService) {}
   isClose: boolean = false;
+  isEncodingDisabled: boolean = false;
   @ViewChild('video', { static: true })
   videoElement!: ElementRef<HTMLVideoElement>;
   @ViewChild('response', { static: true })
@@ -136,6 +134,7 @@ export class EnrolComponent {
   };
 
   async saveEncodings(): Promise<void> {
+    this.isEncodingDisabled = true;
     const formData = new FormData();
     formData.append('employee_id', this.user.userId.toString());
 

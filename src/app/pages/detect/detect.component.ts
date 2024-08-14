@@ -66,7 +66,6 @@ export class DetectComponent {
       const imageBlob = await new Promise<Blob | null>((resolve) =>
         canvas.toBlob(resolve, 'image/jpeg')
       );
-      console.log(imageBlob);
       if (imageBlob) {
         this.attendanceService.markAttendance(imageBlob).subscribe({
           next: (data) => {
