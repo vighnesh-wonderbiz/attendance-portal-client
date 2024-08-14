@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import FaceDetectionResponse from '../models/detection.model';
 
 @Injectable({
   providedIn: 'root',
@@ -18,11 +19,15 @@ export class FaceService {
     return this.http.post(`${this.baseURI}/save-encoding/`, formData);
   }
 
-  markAttendance(imageBlob: Blob): Observable<any> {
+  markAttendance(imageBlob: Blob): Observable<FaceDetectionResponse> {
     const formData = new FormData();
-    console.log(imageBlob)
     formData.append('file', imageBlob, 'capture.jpg');
-    console.log(formData);
-    return this.http.post(`${this.baseURI}/mark-attendance/`, formData);
+    return this.http.post<FaceDetectionResponse>(
+      `${this.baseURI}/mark-attendance/`,
+      formData,
+      {
+        responseType: 'json' as 'json', 
+      }
+    );
   }
 }

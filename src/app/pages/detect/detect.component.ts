@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, viewChild, ViewChild } from '@angular/core';
 import { FaceService } from '../../services/face.service';
 
 @Component({
@@ -8,12 +8,16 @@ import { FaceService } from '../../services/face.service';
 })
 export class DetectComponent {
   constructor(private attendanceService: FaceService) {}
-
+  isDetected: boolean = false;
   private stream: MediaStream | null = null;
   @ViewChild('video', { static: true })
   videoElement!: ElementRef<HTMLVideoElement>;
   @ViewChild('res', { static: true })
-  resElement!: ElementRef<HTMLParagraphElement>;
+  resElement!: ElementRef<HTMLImageElement>;
+
+  @ViewChild('display', { static: true })
+  displayElement!: ElementRef<HTMLParagraphElement>;
+
   ngOnInit(): void {
     this.initializeWebcam();
     console.log('test');
@@ -62,18 +66,34 @@ export class DetectComponent {
       const imageBlob = await new Promise<Blob | null>((resolve) =>
         canvas.toBlob(resolve, 'image/jpeg')
       );
-      console.log(imageBlob)
+      console.log(imageBlob);
       if (imageBlob) {
-        this.attendanceService.markAttendance(imageBlob).subscribe(
-          (data) => {
+        this.attendanceService.markAttendance(imageBlob).subscribe({
+          next: (data) => {
+            const imageUrl = `data:image/jpeg;base64,${data.image_base64}`;
+            const image = new Image();
+            image.src = imageUrl;
             if (this.resElement) {
-              this.resElement.nativeElement.innerText = data.message;
+              this.resElement.nativeElement.innerHTML = ''; // Clear previous content
+              this.resElement.nativeElement.appendChild(image);
+              const attendedNames = data.face_names.filter(
+                (n) => n != 'Unknown'
+              );
+              this.displayElement.nativeElement.innerText = `Marked Attendance for ${attendedNames.join(
+                ', '
+              )}`;
+              this.isDetected = true;
+              setTimeout(() => {
+                this.isDetected = false;
+                this.displayElement.nativeElement.innerText = '';
+              }, 4000);
             }
+            console.log('Detected Faces:', data.face_names);
           },
-          (error) => {
+          error: (error) => {
             console.error('Error marking attendance:', error);
-          }
-        );
+          },
+        });
       }
     }
   }

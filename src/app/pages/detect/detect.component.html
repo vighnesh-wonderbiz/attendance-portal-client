@@ -3,22 +3,23 @@
     <video
       #video
       id="video"
+      [ngClass]="{ hidden: isDetected }"
       class="w-full max-w-2xl object-cover shadow-lg rounded-md border-2 border-gray-200"
       autoplay
     ></video>
     <div
+      #res
       id="video"
-      class="hidden w-[480px] h-[720px] sm:h-[inherit] shadow-lg rounded-md border-2 border-gray-200"
-    >
-      <img class="w-full object-cover" src="" />
-    </div>
+      [ngClass]="{ hidden: !isDetected }"
+      class="hidden shadow-lg w-full max-w-2xl object-cover rounded-md border-2 border-gray-200"
+    ></div>
   </div>
   <button
     type="button"
-    class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 mt-5"
     (click)="markAttendance()"
+    class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 mt-5"
   >
     Mark Attendance
   </button>
-  <p #res></p>
+  <p #display></p>
 </div>
